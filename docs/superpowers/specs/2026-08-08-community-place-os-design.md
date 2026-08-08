@@ -1,58 +1,54 @@
-# Community-Owned Location Platform — Design (Blitz MVP)
+# Community-Owned Location Platform — Design (Mikasa modular)
 
-**Date:** 2026-08-08  
-**Status:** Approved for implementation (chat lock + repo baru)
+**Date:** 2026-08-08 (updated modular)  
+**Status:** Modular contracts implemented; deploy addresses into `web/.env`
 
 ## Vision
 
-People who use a place (e.g. running loop outside Kebun Raya Bogor) can co-own its future: participate → reputation → propose → fund → execute → prove → reputation up.
+People who use a place can co-own its future: presence → reputation → tier → propose → vote → fund → milestone proof → verify → release → reputation up.
 
-## Blitz MVP (vertical slice only)
+## Modular contracts (Monad Testnet)
 
-One place → join → one proposal → micro-contribute MON → funded → proof → verify → reputation bump.
+| Module | Role |
+|--------|------|
+| `MikasaMembership` | Register; reputation (module-only `addReputation`); tier; voting power |
+| `MikasaLocation` | Location pin; join; check-in |
+| `MikasaTreasury` | Escrow + `releaseMilestone` |
+| `MikasaProposal` | Vote → crowdfund → proof CID → verify → release |
 
-### In scope
+Legacy single-contract: `CommunityPlace.sol`.
 
-- Solidity contract on **Monad Testnet (10143)**
-- Native MON contributions (repeated micro-pledges)
-- Contribution + Execution reputation counters
-- Minimal web UI (wagmi): connect, place, propose, contribute, proof, verify
+See [`contracts/README.md`](../../contracts/README.md) for deploy.
 
-### Out of scope (pitch / roadmap)
+## Tier (on-chain permissions)
 
-- Full tier system (Visitor→Guardian)
-- GPS distance / anti-cheat
-- Multi-milestone escrow
-- Social feed, map tiles as product core
-- Indexer, AA, oracles, bridges
+- 0–99 Visitor · 100–299 Member · 300–699 Contributor · 700–1499 Steward · 1500+ Guardian
+- Voting power: 0 / 1 / 2 / 3 / 5
+- Propose / vote / fund: Member+
+- Manage / submit proof (non-creator): Steward+
 
-## Why Monad
+Join/found location awards +100 rep (Blitz bootstrap to Member).
 
-Many small contributions should feel fast and cheap; demo shows live funding meter via repeated txs.
+## Location engagement → reputation — Status: IMPLEMENTED
+
+| Action | Rep |
+|--------|-----|
+| Check-in | +5 |
+| Complete activity | +10 |
+| Join community event | +15 |
+| Submit proposal | +10 |
+| Fund a proposal | +5 |
+| Verify project | +5 |
+| Successfully execute project | +50 |
+
+GPS / photos / activity details may stay off-chain; reputation is recorded on-chain via authorized modules only.
 
 ## On-chain vs off-chain
 
 | On-chain | Off-chain |
 |----------|-----------|
-| Place, membership, proposal, contributes, status, proof URI string, verify, reputation | Map UI, photos/videos binaries, GPS |
+| Membership, location, proposals, escrow, milestone CID, verify, release, reputation | Maps search, GPS Nearby, photos, feed UX |
 
-## Contract API (MVP)
+## Demo path
 
-- `createPlace(name, locationLabel)`
-- `joinPlace(placeId)`
-- `createProposal(placeId, title, description, goalWei)`
-- `contribute(proposalId)` payable
-- Auto `Funded` when `raised >= goal`
-- `submitProof(proposalId, proofUri, report)`
-- `verify(proposalId)` — member verifies → `Verified`, bump creator execution rep
-- Views for place, proposal, member reputation
-
-## Stack
-
-- `contracts/` — Foundry + Solidity ^0.8.20
-- `web/` — Vite + React + wagmi + viem
-- Network: Monad Testnet RPC `https://testnet-rpc.monad.xyz`
-
-## Demo path (3 min)
-
-Open place → create/show proposal → 2–3 wallets micro-contribute → funded → submit proof → verify → show reputation + explorer.
+Register → Anchor location → Check-in → Propose (3 milestones) → Vote → Close voting → Contribute → Proof → Verify → MON release → tier/power on Profile.

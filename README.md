@@ -41,6 +41,44 @@ npm install
 npm run dev
 ```
 
+## 3. Deploy UI to Vercel
+
+App lives in `web/` (Vite + React).
+
+1. Push repo to GitHub
+2. [vercel.com/new](https://vercel.com/new) → import the repo
+3. **Root Directory:** `web`
+4. Framework preset: Vite (auto via `web/vercel.json`)
+5. Add Environment Variables (Production):
+
+| Name | Value |
+|------|--------|
+| `VITE_MEMBERSHIP_ADDRESS` | `0x1D6B5D243a7A898465dd7eCa2ca833ae0aC1F1Ea` |
+| `VITE_LOCATION_ADDRESS` | `0xaB782CE2EeD13CC063372dd19BfCb83941207Ff1` |
+| `VITE_TREASURY_ADDRESS` | `0xa539BE23bef4a92723F79C18ff00611F1467aA6b` |
+| `VITE_PROPOSAL_ADDRESS` | `0x04a8E28872a7d69d26aca59B62e226be5a5645C3` |
+| `VITE_CONTRACT_ADDRESS` | optional legacy |
+
+6. Deploy → open the URL → connect wallet on Monad Testnet
+
+CLI alternative:
+
+```bash
+cd web
+npx vercel
+# then set env vars in dashboard or:
+npx vercel env add VITE_MEMBERSHIP_ADDRESS
+npx vercel --prod
+```
+
+Local production check:
+
+```bash
+cd web
+npm run build
+npm run preview
+```
+
 ## Demo path (3 min)
 
 1. Connect wallet (Rabby/MetaMask on Monad Testnet)
