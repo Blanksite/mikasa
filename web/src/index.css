@@ -1,0 +1,165 @@
+:root {
+  color: #1a2418;
+  background:
+    radial-gradient(ellipse 80% 50% at 20% -10%, #c8e6c0 0%, transparent 55%),
+    radial-gradient(ellipse 70% 40% at 100% 0%, #f0e6c8 0%, transparent 50%),
+    #f4f7f2;
+  font-family: 'Segoe UI', system-ui, sans-serif;
+  line-height: 1.45;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+}
+
+.app {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 2rem 1.25rem 4rem;
+}
+
+.hero h1 {
+  font-family: Georgia, 'Times New Roman', serif;
+  font-size: clamp(2rem, 5vw, 3rem);
+  margin: 0.2rem 0 0.6rem;
+  letter-spacing: -0.02em;
+}
+
+.eyebrow {
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  font-size: 0.75rem;
+  opacity: 0.7;
+  margin: 0;
+}
+
+.lede {
+  max-width: 36rem;
+  opacity: 0.85;
+}
+
+.wallet {
+  display: flex;
+  gap: 0.75rem;
+  align-items: center;
+  margin-top: 1rem;
+}
+
+.addr {
+  font-family: ui-monospace, monospace;
+  font-size: 0.9rem;
+}
+
+.grid {
+  display: grid;
+  gap: 1rem;
+  margin-top: 2rem;
+}
+
+@media (min-width: 800px) {
+  .grid {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+section {
+  background: rgba(255, 255, 255, 0.72);
+  border: 1px solid rgba(40, 70, 40, 0.12);
+  padding: 1.1rem 1.2rem 1.3rem;
+  border-radius: 4px;
+}
+
+section h2 {
+  margin: 0 0 0.8rem;
+  font-size: 1.05rem;
+}
+
+label {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  font-size: 0.8rem;
+  margin-bottom: 0.65rem;
+  opacity: 0.9;
+}
+
+input,
+textarea {
+  font: inherit;
+  padding: 0.55rem 0.65rem;
+  border: 1px solid rgba(40, 70, 40, 0.2);
+  border-radius: 4px;
+  background: #fff;
+}
+
+button {
+  font: inherit;
+  cursor: pointer;
+  background: #234d2c;
+  color: #f4f7f2;
+  border: none;
+  padding: 0.55rem 0.9rem;
+  border-radius: 4px;
+  margin: 0.25rem 0.4rem 0.25rem 0;
+}
+
+button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+button.ghost {
+  background: transparent;
+  color: #234d2c;
+  border: 1px solid rgba(35, 77, 44, 0.35);
+}
+
+.card {
+  margin-top: 0.85rem;
+  padding: 0.75rem;
+  background: rgba(35, 77, 44, 0.06);
+  border-radius: 4px;
+  font-size: 0.9rem;
+}
+
+.card p {
+  margin: 0.25rem 0;
+}
+
+.meter {
+  height: 8px;
+  background: rgba(0, 0, 0, 0.08);
+  border-radius: 99px;
+  overflow: hidden;
+  margin-top: 0.5rem;
+}
+
+.meter > div {
+  height: 100%;
+  background: #3d8b4f;
+}
+
+.warn {
+  color: #8a3b12;
+  background: #fff1e6;
+  padding: 0.6rem 0.75rem;
+  border-radius: 4px;
+  font-size: 0.9rem;
+}
+
+.status {
+  font-size: 0.9rem;
+}
+
+footer {
+  margin-top: 2rem;
+  opacity: 0.9;
+}
+
+code {
+  font-size: 0.85em;
+}

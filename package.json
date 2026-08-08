@@ -1,0 +1,10 @@
+{
+  "name": "place-os",
+  "private": true,
+  "version": "0.1.0",
+  "description": "Community-Owned Location Platform — Monad Blitz MVP",
+  "scripts": {
+    "dev": "npm run dev --prefix web",
+    "build": "npm run build --prefix web"
+  }
+}
