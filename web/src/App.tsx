@@ -3,11 +3,13 @@ import { parseEther } from 'viem'
 import {
   useAccount,
   useConnect,
+  useConnectors,
   useDisconnect,
   useWriteContract,
   useWaitForTransactionReceipt,
   useReadContract,
   usePublicClient,
+  useSwitchChain,
 } from 'wagmi'
 import {
   communityPlaceAbi,
@@ -140,8 +142,11 @@ function openActor(
 function App() {
   const { t } = useI18n()
   const { address, isConnected, chainId } = useAccount()
-  const { connect, connectors, isPending: connecting } = useConnect()
+  const connectors = useConnectors()
+  const { connect, isPending: connecting, error: connectError, reset: resetConnect } =
+    useConnect()
   const { disconnect } = useDisconnect()
+  const { switchChain, isPending: switchingChain } = useSwitchChain()
   const { writeContract, writeContractAsync, data: txHash, isPending, error: writeError, reset } =
     useWriteContract()
   const { isSuccess, isLoading: txConfirming } = useWaitForTransactionReceipt({
@@ -275,6 +280,13 @@ function App() {
     view.name === 'location' ||
     view.name === 'otherProfile'
 
+  const walletOptions = useMemo(() => {
+    // Prefer EIP-6963 wallets (MetaMask, Rabby, …) over generic window.ethereum
+    const announced = connectors.filter((c) => c.id !== 'injected')
+    if (announced.length > 0) return announced
+    return connectors.filter((c) => c.type === 'injected')
+  }, [connectors])
+
   if (!isConnected || !address) {
     return (
       <div className="shell login">
@@ -286,15 +298,38 @@ function App() {
           <p className="kicker">{t('communityOwned')}</p>
           <h1>Mikasa.</h1>
           <p className="lede">{t('hero')}</p>
-          <button
-            type="button"
-            className="primary login-cta"
-            disabled={connecting}
-            onClick={() => connect({ connector: connectors[0] })}
-          >
-            <span>{connecting ? t('connecting') : t('enterWallet')}</span>
-            <span aria-hidden="true">↗</span>
-          </button>
+          <div className="wallet-list">
+            {walletOptions.length === 0 && (
+              <p className="hint">{t('noWalletFound')}</p>
+            )}
+            {walletOptions.map((connector) => (
+              <button
+                key={connector.uid}
+                type="button"
+                className="primary login-cta"
+                disabled={connecting}
+                onClick={() => {
+                  resetConnect()
+                  connect({ connector, chainId: 10143 })
+                }}
+              >
+                {connector.icon ? (
+                  <img className="wallet-icon" src={connector.icon} alt="" />
+                ) : null}
+                <span>
+                  {connecting
+                    ? t('connecting')
+                    : `${t('enterWallet')} · ${connector.name}`}
+                </span>
+                <span aria-hidden="true">↗</span>
+              </button>
+            ))}
+          </div>
+          {connectError && (
+            <p className="warn">
+              {connectError.shortMessage || connectError.message}
+            </p>
+          )}
           <p className="hint">{t('walletOnly')}</p>
         </div>
       </div>
@@ -329,7 +364,17 @@ function App() {
       </header>
 
       {wrongChain && (
-        <p className="warn">{t('switchNetwork')}</p>
+        <p className="warn">
+          {t('switchNetwork')}{' '}
+          <button
+            type="button"
+            className="ghost small"
+            disabled={switchingChain}
+            onClick={() => switchChain({ chainId: 10143 })}
+          >
+            {switchingChain ? t('pending') : t('switchToMonad')}
+          </button>
+        </p>
       )}
 
       {(isPending || txConfirming || (txHash && isSuccess) || lastLatencySec != null) && (

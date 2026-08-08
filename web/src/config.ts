@@ -16,7 +16,13 @@ export const monadTestnet = {
 
 export const config = createConfig({
   chains: [monadTestnet],
-  connectors: [injected()],
+  // EIP-6963 discovers MetaMask, Rabby, etc. as separate connectors
+  multiInjectedProviderDiscovery: true,
+  connectors: [
+    injected({
+      shimDisconnect: true,
+    }),
+  ],
   transports: {
     [monadTestnet.id]: http('https://testnet-rpc.monad.xyz'),
   },
