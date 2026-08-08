@@ -280,11 +280,18 @@ function App() {
     view.name === 'location' ||
     view.name === 'otherProfile'
 
-  const walletOptions = useMemo(() => {
-    // Prefer EIP-6963 wallets (MetaMask, Rabby, …) over generic window.ethereum
+  const preferredConnector = useMemo(() => {
+    // When MetaMask + Rabby both inject, prefer an EIP-6963 wallet over generic Injected
     const announced = connectors.filter((c) => c.id !== 'injected')
-    if (announced.length > 0) return announced
-    return connectors.filter((c) => c.type === 'injected')
+    const byName = (needle: string) =>
+      announced.find((c) => c.name.toLowerCase().includes(needle))
+    return (
+      byName('rabby') ||
+      byName('metamask') ||
+      announced[0] ||
+      connectors.find((c) => c.type === 'injected') ||
+      connectors[0]
+    )
   }, [connectors])
 
   if (!isConnected || !address) {
@@ -298,33 +305,19 @@ function App() {
           <p className="kicker">{t('communityOwned')}</p>
           <h1>Mikasa.</h1>
           <p className="lede">{t('hero')}</p>
-          <div className="wallet-list">
-            {walletOptions.length === 0 && (
-              <p className="hint">{t('noWalletFound')}</p>
-            )}
-            {walletOptions.map((connector) => (
-              <button
-                key={connector.uid}
-                type="button"
-                className="primary login-cta"
-                disabled={connecting}
-                onClick={() => {
-                  resetConnect()
-                  connect({ connector, chainId: 10143 })
-                }}
-              >
-                {connector.icon ? (
-                  <img className="wallet-icon" src={connector.icon} alt="" />
-                ) : null}
-                <span>
-                  {connecting
-                    ? t('connecting')
-                    : `${t('enterWallet')} · ${connector.name}`}
-                </span>
-                <span aria-hidden="true">↗</span>
-              </button>
-            ))}
-          </div>
+          <button
+            type="button"
+            className="primary login-cta"
+            disabled={connecting || !preferredConnector}
+            onClick={() => {
+              if (!preferredConnector) return
+              resetConnect()
+              connect({ connector: preferredConnector, chainId: 10143 })
+            }}
+          >
+            <span>{connecting ? t('connecting') : t('enterWallet')}</span>
+            <span aria-hidden="true">↗</span>
+          </button>
           {connectError && (
             <p className="warn">
               {connectError.shortMessage || connectError.message}
